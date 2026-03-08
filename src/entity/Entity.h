@@ -17,6 +17,8 @@ public:
     void TakeDamage(float amount);
     void Heal(float amount);
 
+    void OnDeath();
+
     void PrintStatus() const;
 
 private:

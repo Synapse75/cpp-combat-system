@@ -32,6 +32,7 @@ void Entity::SetStat(StatType type, float value) {
 }
 void Entity::ModifyStat(StatType type, float delta) {
     stats_[type] += delta;
+    if (stats_[type] < 0) stats_[type] = 0; // 防止负数
 }
 void Entity::TakeDamage(float amount) {
     ModifyStat(StatType::HP, -amount);

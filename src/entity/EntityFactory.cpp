@@ -1,4 +1,5 @@
 #include "EntityFactory.h"
+#include "../data/EntityRegistry.h"
 
 std::unique_ptr<Entity> EntityFactory::CreatePlayer(const std::string& name) {
     auto player = std::make_unique<Entity>(1, name);
@@ -7,6 +8,7 @@ std::unique_ptr<Entity> EntityFactory::CreatePlayer(const std::string& name) {
     player->SetStat(StatType::Defense, 10.0f);
     player->SetStat(StatType::CritDamage, 1.5f);
     player->SetStat(StatType::CritRate, 0.1f);
+    EntityRegistry::Instance().Register(player->GetId(), name);
     return player;
 }
 
@@ -17,5 +19,6 @@ std::unique_ptr<Entity> EntityFactory::CreateEnemy(const std::string& name) {
     enemy->SetStat(StatType::Defense, 5.0f);
     enemy->SetStat(StatType::CritDamage, 1.0f);
     enemy->SetStat(StatType::CritRate, 0.0f);
+    EntityRegistry::Instance().Register(enemy->GetId(), name);
     return enemy;
 }
