@@ -46,3 +46,11 @@ void Entity::PrintStatus() const {
         std::cout << "  " << ToString(stat.first) << ": " << stat.second << "\n";
     }
 }
+
+SkillManager& Entity::GetSkillManager() {
+    return skillManager_;
+}
+
+const SkillManager& Entity::GetSkillManager() const {
+    return skillManager_;
+}

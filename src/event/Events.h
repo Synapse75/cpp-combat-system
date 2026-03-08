@@ -23,3 +23,9 @@ struct BuffAppliedEvent {
     int targetId; // ID of the entity receiving the buff
     std::string buffName; // Name of the buff being applied
 };
+
+struct HealEvent {
+    int healerId; // ID of the entity healing
+    int targetId; // ID of the entity being healed
+    float healAmount; // Amount of health restored
+};

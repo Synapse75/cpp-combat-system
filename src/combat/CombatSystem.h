@@ -23,6 +23,13 @@ public:
         float skillMultiplier = 1.0f
     );
 
+    // 执行治疗（计算 + 加血 + 发事件）
+    static void ApplyHealing(
+        Entity& healer,
+        Entity& target,
+        float skillMultiplier = 1.0f
+    );
+
 private:
     // 使用 mt19937 随机数引擎判断暴击
     static bool RollCrit(float critRate);

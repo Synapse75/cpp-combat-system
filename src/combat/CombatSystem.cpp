@@ -1,10 +1,6 @@
 #include "CombatSystem.h"
-#include "../entity/Entity.h"
 #include "../event/EventBus.h"
-#include "../event/Events.h"
 #include <random>
-
-
 
 DamageResult CombatSystem::CalculateDamage(
     const Entity& attacker,
@@ -34,17 +30,34 @@ void CombatSystem::ApplyDamage(
     defender.TakeDamage(result.finalDamage);
 
     // 发出伤害事件
-    DamageEvent DmgEvt{
+    DamageEvent damageEvt{
         attacker.GetId(),
         defender.GetId(),
         result.finalDamage,
         result.isCrit
     };
-    EventBus::Instance().Emit<DamageEvent>(DmgEvt);
+    EventBus::Instance().Emit<DamageEvent>(damageEvt);
     if (!defender.IsAlive()) {
         EntityDeadEvent deathEvt{defender.GetId()};
         EventBus::Instance().Emit<EntityDeadEvent>(deathEvt);
     }
+}
+
+void CombatSystem::ApplyHealing(
+    Entity& healer,
+    Entity& target,
+    float skillMultiplier
+) {
+    float healAmount = healer.GetStat(StatType::Attack) * skillMultiplier; // 简单治疗公式
+    target.Heal(healAmount);
+
+    // 发出治疗事件
+    HealEvent healEvt{
+        healer.GetId(),
+        target.GetId(),
+        healAmount
+    };
+    EventBus::Instance().Emit<HealEvent>(healEvt);
 }
 
 bool CombatSystem::RollCrit(float critRate) {

@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include "../core/Types.h"
+#include "../skill/SkillManager.h"
 #include <unordered_map>
 
 class Entity {
@@ -17,12 +18,14 @@ public:
     void TakeDamage(float amount);
     void Heal(float amount);
 
-    void OnDeath();
-
     void PrintStatus() const;
+
+    SkillManager& GetSkillManager();
+    const SkillManager& GetSkillManager() const;
 
 private:
     int id_;
     std::string name_;
     std::unordered_map<StatType, float> stats_;
+    SkillManager skillManager_;
 };

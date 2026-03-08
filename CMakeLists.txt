@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.15)
+
 project(combat_system)
 
 set(CMAKE_CXX_STANDARD 17)
 
-# 递归添加 src 目录下所有 cpp 文件
-file(GLOB_RECURSE SRC_FILES
+file(GLOB_RECURSE SRC_FILES CONFIGURE_DEPENDS
     src/entity/*.cpp
     src/event/*.cpp
     src/combat/*.cpp
@@ -19,6 +19,4 @@ add_executable(combat_system
     ${SRC_FILES}
 )
 
-# 如果后续有第三方库，可以在这里添加 include_directories 或 target_link_libraries
-# include_directories(third_party/nlohmann)
-# target_link_libraries(combat_system ...)
+target_include_directories(combat_system PRIVATE src)
