@@ -47,10 +47,11 @@ void Entity::PrintStatus() const {
     }
 }
 
-SkillManager& Entity::GetSkillManager() {
-    return skillManager_;
-}
-
-const SkillManager& Entity::GetSkillManager() const {
-    return skillManager_;
+void Entity::CastSkill(const std::string& skillName, Entity& target) {
+    Skill* skill = skillManager_.GetSkill(skillName);
+    if (skill && skill->IsReady()) {
+        skill->Use(*this, target);
+    } else {
+        std::cout << "技能 " << skillName << " 不可用！\n";
+    }
 }

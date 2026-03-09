@@ -2,6 +2,7 @@
 #include <string>
 #include "../core/Types.h"
 #include "../skill/SkillManager.h"
+#include "../buff/BuffManager.h"
 #include <unordered_map>
 
 class Entity {
@@ -20,12 +21,26 @@ public:
 
     void PrintStatus() const;
 
-    SkillManager& GetSkillManager();
-    const SkillManager& GetSkillManager() const;
+    SkillManager& GetSkillManager() {
+        return skillManager_;
+    }
+    const SkillManager& GetSkillManager() const {
+        return skillManager_;
+    }
+
+    BuffManager& GetBuffManager() {
+        return buffManager_;
+    }
+    const BuffManager& GetBuffManager() const {
+        return buffManager_;
+    }
+
+    void CastSkill(const std::string& skillName, Entity& target);
 
 private:
     int id_;
     std::string name_;
     std::unordered_map<StatType, float> stats_;
     SkillManager skillManager_;
+    BuffManager buffManager_;
 };

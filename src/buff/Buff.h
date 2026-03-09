@@ -1,0 +1,39 @@
+#pragma once
+#include <string>
+
+class Entity; // 前向声明
+
+enum class StackPolicy {
+    None,       // 不可叠加
+    Refresh,    // 刷新持续时间
+    Stack       // 叠层数（效果加强）
+};
+
+class Buff {
+public:
+    Buff(const std::string& name, float duration, float tickInterval, StackPolicy policy);
+    virtual ~Buff() = default;
+
+    const std::string& GetName() const;
+    bool IsExpired() const;
+    int GetStacks() const;
+
+    virtual void OnApply(Entity& target) = 0;   // 首次施加
+    virtual void OnTick(Entity& target) = 0;    // 每次 tick
+    virtual void OnRemove(Entity& target) = 0;  // 到期移除
+
+    void Update(float deltaTime, Entity& target); // 推进时间，触发 tick
+    void AddStack();
+    void RefreshDuration();
+    StackPolicy GetStackPolicy() const { return policy_; }
+    float GetRemainingTime() const { return remainingTime_; }
+
+protected:
+    std::string name_;
+    float duration_;
+    float remainingTime_;
+    float tickInterval_;
+    float tickTimer_;
+    int stacks_;
+    StackPolicy policy_;
+};

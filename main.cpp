@@ -7,18 +7,15 @@
 #include <iostream>
 
 int main() {
-    // 事件系统测试
-
-    std::cout << "[事件系统测试]" << std::endl;
     size_t damageSubId = EventBus::Instance().Subscribe<DamageEvent>(
         [](const DamageEvent& e) {
             auto& reg = EntityRegistry::Instance();
             std::string attackerName = reg.GetName(e.attackerId);
             std::string defenderName = reg.GetName(e.defenderId);
-            std::cout << "[回调] 伤害事件: 攻击者 " << attackerName
-                      << " -> 防御者 " << defenderName
-                      << ", 伤害 " << e.damage
-                      << (e.isCrit ? " (暴击)" : "") << std::endl;
+            std::cout << "[Callback] DamageEvent: " << attackerName
+                      << " -> " << defenderName
+                      << ", " << e.damage
+                      << (e.isCrit ? " (CRITICAL!)" : "") << std::endl;
         }
     );
 
@@ -27,9 +24,9 @@ int main() {
             auto& reg = EntityRegistry::Instance();
             std::string healerName = reg.GetName(e.healerId);
             std::string targetName = reg.GetName(e.targetId);
-            std::cout << "[回调] 治疗事件: 治疗者 " << healerName
-                      << " -> 目标 " << targetName
-                      << ", 治疗量 " << e.healAmount << std::endl;
+            std::cout << "[Callback] HealEvent: " << healerName
+                      << " -> " << targetName
+                      << ", Heal Amount: " << e.healAmount << std::endl;
         }
     );
 
@@ -37,7 +34,7 @@ int main() {
         [](const EntityDeadEvent& e) {
             auto& reg = EntityRegistry::Instance();
             std::string entityName = reg.GetName(e.entityId);
-            std::cout << "[回调] 实体死亡事件: 实体 " << entityName << " 死亡了！" << std::endl;
+            std::cout << "[Callback] EntityDeadEvent: Entity " << entityName << " has died!" << std::endl;
         }
     );
 
@@ -46,23 +43,21 @@ int main() {
             auto& reg = EntityRegistry::Instance();
             std::string casterName = reg.GetName(e.casterId);
             std::string targetName = reg.GetName(e.targetId);
-            std::cout << "[回调] 技能施放事件: 施法者 " << casterName
-                      << " -> 目标 " << targetName
-                      << ", 技能 " << e.skillName << std::endl;
+            std::cout << "[Callback] SkillCastEvent: Caster " << casterName
+                      << " -> Target " << targetName
+                      << ", Skill " << e.skillName << std::endl;
         }
     );
 
-    std::cout << "\n[战斗系统演示]" << std::endl;
     auto player = EntityFactory::CreatePlayer("Hero");
     auto enemy = EntityFactory::CreateEnemy("Goblin");
 
     player->PrintStatus();
     enemy->PrintStatus();
 
-    CombatSystem::ApplyDamage(*player, *enemy, 1);
-    CombatSystem::ApplyDamage(*enemy, *player, 1);
-    player->GetSkillManager().GetSkill("Fireball")->Use(*player, *enemy);
-    CombatSystem::ApplyDamage(*player, *enemy, 2); // 强力攻击测试
+    player->CastSkill("Fireball", *enemy);
+    enemy->CastSkill("Fireball", *player);
+    player->CastSkill("Heal", *player);
 
     std::cout << "\nAfter combat:\n";
     player->PrintStatus();
