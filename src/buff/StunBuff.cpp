@@ -1,11 +1,10 @@
 #include "StunBuff.h"
 #include "../entity/Entity.h"
 #include <iostream>
-StunBuff::StunBuff(float duration, float tickInterval)
-    : Buff("Stun", duration, tickInterval, StackPolicy::None) {}
+StunBuff::StunBuff(const nlohmann::json& config) : Buff(config) {}
 
 void StunBuff::OnApply(Entity& target) {
-    std::cout << "Stun applied to " << target.GetName() << std::endl;
+    std::cout << name_ << " applied to " << target.GetName() << std::endl;
 }
 
 void StunBuff::OnTick(Entity& target) {
@@ -13,5 +12,5 @@ void StunBuff::OnTick(Entity& target) {
 }
 
 void StunBuff::OnRemove(Entity& target) {
-    std::cout << "Stun removed from " << target.GetName() << std::endl;
+    std::cout << name_ << " removed from " << target.GetName() << std::endl;
 }

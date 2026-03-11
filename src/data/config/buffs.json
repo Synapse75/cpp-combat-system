@@ -1,0 +1,28 @@
+{
+    "buffs": [
+        {
+            "name": "Burn",
+            "type": "dot",
+            "damage": 8,
+            "duration": 5.0,
+            "tickInterval": 1.0,
+            "stackPolicy": "refresh"
+        },
+        {
+            "name": "Poison",
+            "type": "dot_percent",
+            "percentDamage": 0.03,
+            "duration": 6.0,
+            "tickInterval": 2.0,
+            "stackPolicy": "stack"
+        },
+        {
+            "name": "AttackBoost",
+            "type": "stat_modify",
+            "stat": "Attack",
+            "value": 20,
+            "duration": 5.0,
+            "stackPolicy": "refresh"
+        }
+    ]
+}

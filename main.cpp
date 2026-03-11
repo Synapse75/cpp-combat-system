@@ -4,9 +4,12 @@
 #include "src/event/Events.h"
 #include "src/data/EntityRegistry.h"
 #include "src/skill/SkillManager.h"
+#include "src/data/DataLoader.h"
 #include <iostream>
 
 int main() {
+    DataLoader::LoadAllConfigs("src/data/config");
+
     size_t damageSubId = EventBus::Instance().Subscribe<DamageEvent>(
         [](const DamageEvent& e) {
             auto& reg = EntityRegistry::Instance();

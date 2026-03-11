@@ -1,0 +1,24 @@
+{
+    "skills": [
+        {
+            "name": "Fireball",
+            "type": "damage",
+            "multiplier": 1.8,
+            "cooldown": 5.0,
+            "applyBuff": "Burn",
+            "buffPossibility": 0.3
+        },
+        {
+            "name": "Heal",
+            "type": "heal",
+            "healAmount": 50,
+            "cooldown": 8.0
+        },
+        {
+            "name": "DashAttack",
+            "type": "damage",
+            "multiplier": 1.2,
+            "cooldown": 2.0
+        }
+    ]
+}

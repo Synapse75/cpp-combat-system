@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include <string>
 
 enum class StatType {
     HP,
@@ -10,3 +11,7 @@ enum class StatType {
     CritRate,
     CritDamage
 };
+
+StatType StringToStatType(const std::string& str);
+
+std::string StatTypeToString(StatType type);

@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include "../third_party/nlohmann/json.hpp"
 
 class Entity; // 前向声明
 
@@ -11,7 +12,7 @@ enum class StackPolicy {
 
 class Buff {
 public:
-    Buff(const std::string& name, float duration, float tickInterval, StackPolicy policy);
+    Buff(const nlohmann::json& config);
     virtual ~Buff() = default;
 
     const std::string& GetName() const;
@@ -30,6 +31,7 @@ public:
 
 protected:
     std::string name_;
+    std::string type_;
     float duration_;
     float remainingTime_;
     float tickInterval_;
