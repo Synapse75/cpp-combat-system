@@ -4,7 +4,13 @@
 StunBuff::StunBuff(const nlohmann::json& config) : Buff(config) {}
 
 void StunBuff::OnApply(Entity& target) {
-    std::cout << name_ << " applied to " << target.GetName() << std::endl;
+    BuffApplyEvent applyEvt{
+        target.GetId(),
+        name_,
+        BuffEffectType::Stun,
+        duration_
+    };
+    EventBus::Instance().Emit<BuffApplyEvent>(applyEvt);
 }
 
 void StunBuff::OnTick(Entity& target) {
@@ -12,5 +18,9 @@ void StunBuff::OnTick(Entity& target) {
 }
 
 void StunBuff::OnRemove(Entity& target) {
-    std::cout << name_ << " removed from " << target.GetName() << std::endl;
+    BuffRemoveEvent removeEvt{
+        target.GetId(),
+        name_,
+    };
+    EventBus::Instance().Emit<BuffRemoveEvent>(removeEvt);
 }

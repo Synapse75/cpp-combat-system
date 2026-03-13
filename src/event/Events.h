@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
 
+enum class BuffEffectType { Damage, Heal, StatModify, Stun, None };
+
 struct DamageEvent {
     int attackerId; // ID of the entity causing damage
     int defenderId; // ID of the entity receiving damage
@@ -18,10 +20,24 @@ struct EntityDeadEvent {
     int entityId; // ID of the entity that died
 };
 
-struct BuffAppliedEvent {
-    int entityId; // ID of the entity applying the buff
+struct BuffApplyEvent {
     int targetId; // ID of the entity receiving the buff
     std::string buffName; // Name of the buff being applied
+    BuffEffectType effectType; // Type of effect this buff applies (damage, heal, stat modify, etc.)
+    float duration; // Duration of the buff
+};
+
+struct BuffTickEvent {
+    int targetId; // ID of the entity affected by the buff tick
+    std::string buffName; // Name of the buff ticking
+    BuffEffectType effectType; // Type of effect this tick applies (damage, heal, etc.)
+    float amount; // Amount of damage/heal/effect applied this tick
+    float remainingTime; // Remaining time of the buff after this tick
+};
+
+struct BuffRemoveEvent {
+    int targetId; // ID of the entity losing the buff
+    std::string buffName; // Name of the buff being removed
 };
 
 struct HealEvent {

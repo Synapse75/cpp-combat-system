@@ -1,4 +1,7 @@
 #include "BuffManager.h"
+#include "../event/Events.h"
+#include "../event/EventBus.h"
+#include "../entity/Entity.h"
 #include <iostream>
 #include <algorithm>
 void BuffManager::ApplyBuff(std::unique_ptr<Buff> buff, Entity& target) {

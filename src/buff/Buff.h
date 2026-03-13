@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
 #include "../third_party/nlohmann/json.hpp"
+#include "../event/Events.h"
+#include "../event/EventBus.h"
 
 class Entity; // 前向声明
 

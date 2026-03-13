@@ -38,7 +38,10 @@ void Entity::TakeDamage(float amount) {
     ModifyStat(StatType::HP, -amount);
 }
 void Entity::Heal(float amount) {
-    ModifyStat(StatType::HP, amount);
+    float newHp = GetStat(StatType::HP) + amount;
+    float maxHp = GetStat(StatType::MaxHP);
+    if (maxHp > 0.0f && newHp > maxHp) newHp = maxHp;
+    SetStat(StatType::HP, newHp);
 }
 void Entity::PrintStatus() const {
     std::cout << "Entity: " << name_ << " (ID: " << id_ << ")\n";
@@ -52,6 +55,6 @@ void Entity::CastSkill(const std::string& skillName, Entity& target) {
     if (skill && skill->IsReady()) {
         skill->Use(*this, target);
     } else {
-        std::cout << "技能 " << skillName << " 不可用！\n";
+        std::cout << "Skill: " << skillName << " unavailable!\n";
     }
 }

@@ -16,10 +16,11 @@ int main() {
             auto& reg = EntityRegistry::Instance();
             std::string attackerName = reg.GetName(e.attackerId);
             std::string defenderName = reg.GetName(e.defenderId);
-            std::cout << "[Callback] DamageEvent: " << attackerName
+            std::cout << "[Damage Event] " << attackerName
                       << " -> " << defenderName
                       << ", " << e.damage
-                      << (e.isCrit ? " (CRITICAL!)" : "") << std::endl;
+                      << (e.isCrit ? " (CRITICAL!)" : "") 
+                      << std::endl;
         }
     );
 
@@ -28,9 +29,10 @@ int main() {
             auto& reg = EntityRegistry::Instance();
             std::string healerName = reg.GetName(e.healerId);
             std::string targetName = reg.GetName(e.targetId);
-            std::cout << "[Callback] HealEvent: " << healerName
+            std::cout << "[Heal Event] " << healerName
                       << " -> " << targetName
-                      << ", Heal Amount: " << e.healAmount << std::endl;
+                      << ", Heal Amount: " << e.healAmount 
+                      << std::endl;
         }
     );
 
@@ -38,7 +40,8 @@ int main() {
         [](const EntityDeadEvent& e) {
             auto& reg = EntityRegistry::Instance();
             std::string entityName = reg.GetName(e.entityId);
-            std::cout << "[Callback] EntityDeadEvent: Entity " << entityName << " has died!" << std::endl;
+            std::cout << "[Death Event] Entity " << entityName << " has died!" 
+                      << std::endl;
         }
     );
 
@@ -47,21 +50,75 @@ int main() {
             auto& reg = EntityRegistry::Instance();
             std::string casterName = reg.GetName(e.casterId);
             std::string targetName = reg.GetName(e.targetId);
-            std::cout << "[Callback] SkillCastEvent: Caster " << casterName
-                      << " -> Target " << targetName
-                      << ", Skill " << e.skillName << std::endl;
+            std::cout << "[Skill Cast Event] " << casterName
+                      << " -> " << targetName
+                      << ", Skill: " << e.skillName 
+                      << std::endl;
+        }
+    );
+
+    size_t buffApplySubId = EventBus::Instance().Subscribe<BuffApplyEvent>(
+        [](const BuffApplyEvent& e) {
+            auto& reg = EntityRegistry::Instance();
+            std::string targetName = reg.GetName(e.targetId);
+            std::cout << "[Buff Apply Event] "
+                      << " Buff: " << e.buffName 
+                      << " Applied to " << targetName 
+                      << ", Remaining Time: " << e.duration
+                      << std::endl;
+        }
+    );
+
+    size_t buffTickSubId = EventBus::Instance().Subscribe<BuffTickEvent>(
+        [](const BuffTickEvent& e) {
+            auto& reg = EntityRegistry::Instance();
+            std::string targetName = reg.GetName(e.targetId);
+            std::cout << "[Buff Tick Event] Buff: " << e.buffName 
+                      << " Ticks on " << targetName 
+                      << ", Remaining Time: " << e.remainingTime
+                      << std::endl;
+            switch (e.effectType)
+            {
+            case BuffEffectType::Damage:
+                std::cout << "[Buff Tick Event] Damage: " << e.amount << std::endl;
+                break;
+            case BuffEffectType::Heal:
+                std::cout << "[Buff Tick Event] Heal: " << e.amount << std::endl;
+                break;
+            case BuffEffectType::StatModify:
+                break;
+            case BuffEffectType::Stun:
+                std::cout << "[Buff Tick Event] " << targetName << " is stunned!" << std::endl;
+                break;
+            default:
+                break;
+            }
+        }
+    );
+
+    size_t buffRemoveSubId = EventBus::Instance().Subscribe<BuffRemoveEvent>(
+        [](const BuffRemoveEvent& e) {
+            auto& reg = EntityRegistry::Instance();
+            std::string targetName = reg.GetName(e.targetId);
+            std::cout << "[Buff Remove Event] "
+                      << " Buff: " << e.buffName 
+                      << " Removed from " << targetName 
+                      << std::endl;
         }
     );
 
     auto player = EntityFactory::CreatePlayer("Hero");
     auto enemy = EntityFactory::CreateEnemy("Goblin");
-    player->GetSkillManager().PrintSkillStatus();
 
     BattleManager battle(std::move(player), std::move(enemy));
     battle.Run();
 
     EventBus::Instance().Unsubscribe(damageSubId);
     EventBus::Instance().Unsubscribe(deathSubId);
+    EventBus::Instance().Unsubscribe(healSubId);
     EventBus::Instance().Unsubscribe(skillSubId);
+    EventBus::Instance().Unsubscribe(buffApplySubId);
+    EventBus::Instance().Unsubscribe(buffTickSubId);
+    EventBus::Instance().Unsubscribe(buffRemoveSubId);
     return 0;
 }

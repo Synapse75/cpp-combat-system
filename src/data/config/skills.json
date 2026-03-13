@@ -3,22 +3,24 @@
         {
             "name": "Fireball",
             "type": "damage",
-            "multiplier": 1.8,
-            "cooldown": 5.0,
+            "multiplier": 1.0,
+            "cooldown": 1.0,
             "applyBuff": "Burn",
-            "buffPossibility": 0.3
+            "buffPossibility": 0.2
         },
         {
             "name": "Heal",
             "type": "heal",
-            "healAmount": 50,
-            "cooldown": 8.0
+            "healAmount": 30,
+            "cooldown": 2.0
         },
         {
-            "name": "DashAttack",
+            "name": "StunningStrike",
             "type": "damage",
-            "multiplier": 1.2,
-            "cooldown": 2.0
+            "multiplier": 1.5,
+            "cooldown": 2.0,
+            "applyBuff": "Stun",
+            "buffPossibility": 0.1
         }
     ]
 }

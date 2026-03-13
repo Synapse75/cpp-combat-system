@@ -12,22 +12,36 @@ BattleManager::BattleManager(
 }
 
 void BattleManager::Run() {
+    std::cout << "===== Battle Start! =====\n";
     while (!IsBattleOver()) {
+        std::cout << "===== Turn " << ++turnCount_ << " =====\n";
+        PrintBattleState();
         PlayerTurn();
         if (!IsBattleOver()) {
             EnemyTurn();
         }
     }
+    std::cout << "===== Battle Over! =====\n";
 }
 
 void BattleManager::PlayerTurn() {
-    std::cout << "Player's turn:\n";
-    PrintBattleState();
+    std::cout << "===== Player's turn =====\n";
+    std::cout << "[DEBUG] Enter PlayerTurn\n";
     TickBuffs(*player_);
-    TickCooldowns();
-
+    TickCooldowns(*player_);
+    if (player_->GetBuffManager().HasBuff("Stun")) {
+        std::cout << "[DEBUG] Player is stunned, skipping turn\n";
+        return;
+    }
+    std::cout << "[DEBUG] Player not stunned, continuing\n";
     std::vector<Skill> skills = player_->GetSkillManager().GetSkills(); // 伪 API：列出玩家技能
-    for (size_t i = 0; i < skills.size(); ++i) std::cout << i << ": " << skills[i].GetName() << "\n";
+    std::cout << "===== Available Skills =====\n";
+    for (size_t i = 1; i < skills.size() + 1; ++i) {
+        std::cout << i << ": " << skills[i - 1].GetName() << "\n"
+                    << "   Type: " << skills[i - 1].GetType() << "\n"
+                    << "   " << (skills[i - 1].IsReady() ? "(Ready)" : "(Cooldown: " + std::to_string(int(skills[i - 1].GetCurrentCooldown())) + ")") << "\n";
+    }
+    std::cout << "============================\n";
     int choice = -1;
     while (true) {
         std::cout << "Choose skill index: ";
@@ -37,22 +51,32 @@ void BattleManager::PlayerTurn() {
             std::cout << "Invalid input\n";
             continue;
         }
-        if (choice >= 0 && choice < (int)skills.size()) break;
+        if (choice >= 1 && choice <= (int)skills.size()) {
+            if (skills[choice - 1].IsReady()) {
+                break;
+            } else {
+                std::cout << "Skill cast failed! Cooldown: " << skills[choice - 1].GetCurrentCooldown() << "\n";
+                continue;
+            }
+        }
         std::cout << "Out of range\n";
     }
-    Entity* target = &*enemy_; // 根据技能类型选择目标（自体/敌方）
-    player_->CastSkill(skills[choice].GetName(), *target);
+    std::cout << "============================\n";
+    if (skills[choice - 1].GetType() == "damage") {
+        player_->CastSkill(skills[choice - 1].GetName(), *enemy_);
+    } else {
+        player_->CastSkill(skills[choice - 1].GetName(), *player_);
+    }
 }
 
 void BattleManager::EnemyTurn() {
-    std::cout << "Enemy's turn:\n";
-    PrintBattleState();
+    std::cout << "===== Enemy's turn =====\n";
     TickBuffs(*enemy_);
-    TickCooldowns();
-    
-    std::vector<Skill> skills = enemy_->GetSkillManager().GetSkills(); // 伪 API：列出敌人技能
+    TickCooldowns(*enemy_);
+    if (enemy_->GetBuffManager().HasBuff("Stun")) return;
+    std::vector<Skill> skills = enemy_->GetSkillManager().GetSkills();
     if (skills.empty()) return;
-    if (enemy_->GetStat(StatType::HP) < 30) {
+    if (enemy_->GetStat(StatType::HP) < 30.0f) {
         // 简单 AI：如果 HP 低于 30%，优先使用治疗技能
         for (const auto& skill : skills) {
             if (skill.GetType() == "heal" && skill.IsReady()) {
@@ -60,30 +84,27 @@ void BattleManager::EnemyTurn() {
                 return;
             }
         }
-    } else {
-        // 否则随机使用攻击技能
-        std::vector<Skill> readySkills;
-        for (const auto& skill : skills) {
-            if (skill.IsReady()) {
-                readySkills.push_back(skill);
-            }
-        }
-        if (!readySkills.empty()) {
-            int idx = rand() % readySkills.size();
-            enemy_->CastSkill(readySkills[idx].GetName(), *player_);
-        }
+    } 
+    std::vector<Skill> readyDamageSkills;
+    for (const auto& skill : skills) {
+        if (!skill.IsReady()) continue;
+        if (skill.GetType() == "heal") continue;
+        readyDamageSkills.push_back(skill);
     }
+
+    if (readyDamageSkills.empty()) return;
+
+    int idx = rand() % readyDamageSkills.size();
+    enemy_->CastSkill(readyDamageSkills[idx].GetName(), *player_);
 
 }
 
 void BattleManager::TickBuffs(Entity& target) {
-    player_->GetBuffManager().UpdateAll(1.0f, target);
-    enemy_->GetBuffManager().UpdateAll(1.0f, target);
+    target.GetBuffManager().UpdateAll(1.0f, target);
 }
 
-void BattleManager::TickCooldowns() {
-    player_->GetSkillManager().UpdateAllCooldowns(1.0f);
-    enemy_->GetSkillManager().UpdateAllCooldowns(1.0f);
+void BattleManager::TickCooldowns(Entity& target) {
+    target.GetSkillManager().UpdateAllCooldowns(1.0f);
 }
 
 void BattleManager::PrintBattleState() {

@@ -8,15 +8,30 @@ DotBuff::DotBuff(const nlohmann::json& config) : Buff(config) {
 }
 
 void DotBuff::OnApply(Entity& target) {
-    std::cout << name_ << " applied to " << target.GetName() << std::endl
-                << "Initial damage: " << damage * stacks_ << std::endl;
+    BuffApplyEvent applyEvt{
+        target.GetId(),
+        name_,
+        BuffEffectType::Damage,
+        duration_
+    };
+    EventBus::Instance().Emit<BuffApplyEvent>(applyEvt);
     target.TakeDamage(damage * stacks_);
 }
 void DotBuff::OnTick(Entity& target) {
-    std::cout << name_ << " tick on " << target.GetName() << std::endl
-                << "Damage: " << damage * stacks_ << std::endl;
+    BuffTickEvent tickEvt{
+        target.GetId(),
+        name_,
+        BuffEffectType::Damage,
+        damage * stacks_,
+        remainingTime_
+    };
+    EventBus::Instance().Emit<BuffTickEvent>(tickEvt);
     target.TakeDamage(damage * stacks_);
 }
 void DotBuff::OnRemove(Entity& target) {
-    std::cout << name_ << " removed from " << target.GetName() << std::endl;
+    BuffRemoveEvent removeEvt{
+        target.GetId(),
+        name_
+    };
+    EventBus::Instance().Emit<BuffRemoveEvent>(removeEvt);
 }

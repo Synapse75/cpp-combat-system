@@ -4,7 +4,7 @@
             "name": "Burn",
             "type": "dot",
             "damage": 8,
-            "duration": 5.0,
+            "duration": 2.0,
             "tickInterval": 1.0,
             "stackPolicy": "refresh"
         },
@@ -12,7 +12,7 @@
             "name": "Poison",
             "type": "dot_percent",
             "percentDamage": 0.03,
-            "duration": 6.0,
+            "duration": 2.0,
             "tickInterval": 2.0,
             "stackPolicy": "stack"
         },
@@ -21,7 +21,13 @@
             "type": "stat_modify",
             "stat": "Attack",
             "value": 20,
-            "duration": 5.0,
+            "duration": 3.0,
+            "stackPolicy": "refresh"
+        },
+        {
+            "name": "Stun",
+            "type": "stun",
+            "duration": 1.0,
             "stackPolicy": "refresh"
         }
     ]

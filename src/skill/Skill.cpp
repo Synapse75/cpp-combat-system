@@ -4,6 +4,7 @@
 #include "../event/EventBus.h"
 #include "../data/DataLoader.h"
 #include <iostream>
+#include <random>
 
 Skill::Skill(const nlohmann::json& config) {
     // 如果 key 不存在，就使用第二个参数作为默认值
@@ -25,26 +26,25 @@ bool Skill::IsReady() const {
     return currentCooldown_ <= 0;
 }
 void Skill::Use(Entity& caster, Entity& target) {
-    if (!IsReady()) {
-        std::cout << "Skill " << name_ << " is on cooldown for " << currentCooldown_ << " seconds.\n";
-        return;
+    if (IsReady()) {
+        SkillCastEvent skillEvt{caster.GetId(), target.GetId(), name_};
+        EventBus::Instance().Emit<SkillCastEvent>(skillEvt);
+        Execute(caster, target);
+        currentCooldown_ = cooldown_;
     }
-    Execute(caster, target);
-    SkillCastEvent skillEvt{caster.GetId(), target.GetId(), name_};
-    EventBus::Instance().Emit<SkillCastEvent>(skillEvt);
-    currentCooldown_ = cooldown_;
 }
 void Skill::Execute(Entity& caster, Entity& target) {
-    std::cout << caster.GetName() << " casts " << name_ << " on " << target.GetName() << "!\n";
     if (type_ == "damage") {
         CombatSystem::ApplyDamage(caster, target, multiplier_);
     } else if (type_ == "heal") {
         CombatSystem::ApplyHealing(caster, target, healAmount_);
     }
-    if (!buffName_.empty() && (rand() / float(RAND_MAX)) < buffPossibility_) {
-        auto buff = DataLoader::LoadBuff(buffName_);
-        if (buff) {
-            target.GetBuffManager().ApplyBuff(std::move(buff), target);
+    if (!buffName_.empty()) {
+        static thread_local std::mt19937_64 rng(std::random_device{}());
+        std::uniform_real_distribution<float> dist(0.0f, 1.0f);
+        if (dist(rng) < buffPossibility_) {
+            auto buff = DataLoader::LoadBuff(buffName_);
+            if (buff) target.GetBuffManager().ApplyBuff(std::move(buff), target);
         }
     }
 }

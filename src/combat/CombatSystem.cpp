@@ -46,9 +46,8 @@ void CombatSystem::ApplyDamage(
 void CombatSystem::ApplyHealing(
     Entity& healer,
     Entity& target,
-    float skillMultiplier
+    float healAmount
 ) {
-    float healAmount = healer.GetStat(StatType::Attack) * skillMultiplier; // 简单治疗公式
     target.Heal(healAmount);
 
     // 发出治疗事件

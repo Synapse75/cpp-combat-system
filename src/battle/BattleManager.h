@@ -17,7 +17,7 @@ private:
     void PlayerTurn();
     void EnemyTurn();    // 简单 AI：随机选技能
     void TickBuffs(Entity& target);    // 推进所有 Buff
-    void TickCooldowns();// 推进技能冷却
+    void TickCooldowns(Entity& target);// 推进技能冷却
     void PrintBattleState();
     bool IsBattleOver() const;
 
