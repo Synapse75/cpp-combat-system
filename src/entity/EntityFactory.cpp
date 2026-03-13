@@ -1,7 +1,7 @@
 #include "EntityFactory.h"
 #include "../data/EntityRegistry.h"
 #include "../data/DataLoader.h"
-
+#include <iostream>
 
 std::unique_ptr<Entity> EntityFactory::CreatePlayer(const std::string& name) {
     auto player = std::make_unique<Entity>(1, name);

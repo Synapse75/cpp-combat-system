@@ -5,6 +5,7 @@
 #include "../buff/StunBuff.h"
 #include "../third_party/nlohmann/json.hpp"
 #include <fstream>
+#include <iostream>
 
 // DataLoader.cpp
 std::unique_ptr<Skill> DataLoader::LoadSkill(const std::string& name) {

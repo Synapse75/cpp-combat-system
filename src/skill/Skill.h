@@ -15,6 +15,7 @@ public:
     void Execute(Entity& caster, Entity& target);
     void UpdateCooldown(float deltaTime); // 每 tick 调用
     float GetCurrentCooldown() const { return currentCooldown_; }
+    const std::string& GetType() const { return type_; }
     
 
 protected:

@@ -5,6 +5,7 @@
 #include "src/data/EntityRegistry.h"
 #include "src/skill/SkillManager.h"
 #include "src/data/DataLoader.h"
+#include "battle/BattleManager.h"
 #include <iostream>
 
 int main() {
@@ -54,17 +55,10 @@ int main() {
 
     auto player = EntityFactory::CreatePlayer("Hero");
     auto enemy = EntityFactory::CreateEnemy("Goblin");
+    player->GetSkillManager().PrintSkillStatus();
 
-    player->PrintStatus();
-    enemy->PrintStatus();
-
-    player->CastSkill("Fireball", *enemy);
-    enemy->CastSkill("Fireball", *player);
-    player->CastSkill("Heal", *player);
-
-    std::cout << "\nAfter combat:\n";
-    player->PrintStatus();
-    enemy->PrintStatus();
+    BattleManager battle(std::move(player), std::move(enemy));
+    battle.Run();
 
     EventBus::Instance().Unsubscribe(damageSubId);
     EventBus::Instance().Unsubscribe(deathSubId);

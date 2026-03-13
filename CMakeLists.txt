@@ -5,6 +5,7 @@ project(combat_system)
 set(CMAKE_CXX_STANDARD 17)
 
 file(GLOB_RECURSE SRC_FILES CONFIGURE_DEPENDS
+    src/battle/*.cpp
     src/entity/*.cpp
     src/event/*.cpp
     src/combat/*.cpp

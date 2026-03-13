@@ -21,9 +21,17 @@ void SkillManager::UpdateAllCooldowns(float deltaTime) {
 }
 
 void SkillManager::PrintSkillStatus() const {
-    std::cout << "技能状态:\n";
+    std::cout << "SkillStatus:\n";
     for (const auto& skill : skills_) {
         std::cout << "  " << skill->GetName() << ": "
                   << (skill->IsReady() ? "Ready" : "Cooldown: " + std::to_string(skill->GetCurrentCooldown())) << "\n";
     }
+}
+
+std::vector<Skill> SkillManager::GetSkills() const {
+    std::vector<Skill> skillList;
+    for (const auto& skill : skills_) {
+        skillList.push_back(*skill);
+    }
+    return skillList;
 }

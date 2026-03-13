@@ -9,7 +9,7 @@ public:
     Skill* GetSkill(const std::string& name);
     void UpdateAllCooldowns(float deltaTime);
     void PrintSkillStatus() const;
-
+    std::vector<Skill> GetSkills() const;
 private:
     std::vector<std::unique_ptr<Skill>> skills_;
 };
