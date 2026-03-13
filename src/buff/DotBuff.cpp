@@ -12,10 +12,11 @@ void DotBuff::OnApply(Entity& target) {
         target.GetId(),
         name_,
         BuffEffectType::Damage,
-        duration_
+        duration_,
+        policy_,
+        stacks_
     };
     EventBus::Instance().Emit<BuffApplyEvent>(applyEvt);
-    target.TakeDamage(damage * stacks_);
 }
 void DotBuff::OnTick(Entity& target) {
     BuffTickEvent tickEvt{

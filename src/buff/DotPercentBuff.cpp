@@ -10,21 +10,22 @@ void DotPercentBuff::OnApply(Entity& target) {
         target.GetId(),
         name_,
         BuffEffectType::Damage,
-        duration_
+        duration_,
+        policy_,
+        stacks_
     };
     EventBus::Instance().Emit<BuffApplyEvent>(applyEvt);
-    target.TakeDamage(target.GetStat(StatType::HP) * percentDamage); // 造成当前生命值5%的伤害
 }
 void DotPercentBuff::OnTick(Entity& target) {
     BuffTickEvent tickEvt{
         target.GetId(),
         name_,
         BuffEffectType::Damage,
-        target.GetStat(StatType::HP) * percentDamage,
+        target.GetStat(StatType::HP) * percentDamage * stacks_,
         remainingTime_
     };
     EventBus::Instance().Emit<BuffTickEvent>(tickEvt);
-    target.TakeDamage(target.GetStat(StatType::HP) * percentDamage); // 造成当前生命值5%的伤害
+    target.TakeDamage(target.GetStat(StatType::HP) * percentDamage * stacks_);
 }
 void DotPercentBuff::OnRemove(Entity& target) {
     BuffRemoveEvent removeEvt{

@@ -2,6 +2,7 @@
 #include <string>
 
 enum class BuffEffectType { Damage, Heal, StatModify, Stun, None };
+enum class StackPolicy { Refresh, Stack, None };
 
 struct DamageEvent {
     int attackerId; // ID of the entity causing damage
@@ -25,6 +26,8 @@ struct BuffApplyEvent {
     std::string buffName; // Name of the buff being applied
     BuffEffectType effectType; // Type of effect this buff applies (damage, heal, stat modify, etc.)
     float duration; // Duration of the buff
+    StackPolicy stackPolicy; // How this buff stacks with existing ones (None, Refresh, Stack)
+    int stacks; // Initial stack count (for Stack policy)
 };
 
 struct BuffTickEvent {

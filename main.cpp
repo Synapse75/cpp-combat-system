@@ -61,11 +61,13 @@ int main() {
         [](const BuffApplyEvent& e) {
             auto& reg = EntityRegistry::Instance();
             std::string targetName = reg.GetName(e.targetId);
-            std::cout << "[Buff Apply Event] "
-                      << " Buff: " << e.buffName 
+            std::cout << "[Buff Apply Event] Buff: " << e.buffName
                       << " Applied to " << targetName 
                       << ", Remaining Time: " << e.duration
                       << std::endl;
+            if (e.stackPolicy == StackPolicy::Stack) {
+                std::cout << "[Buff Apply Event] Stack: " << e.stacks << std::endl;
+            }
         }
     );
 
@@ -100,8 +102,7 @@ int main() {
         [](const BuffRemoveEvent& e) {
             auto& reg = EntityRegistry::Instance();
             std::string targetName = reg.GetName(e.targetId);
-            std::cout << "[Buff Remove Event] "
-                      << " Buff: " << e.buffName 
+            std::cout << "[Buff Remove Event] Buff: " << e.buffName
                       << " Removed from " << targetName 
                       << std::endl;
         }

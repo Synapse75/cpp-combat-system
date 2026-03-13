@@ -15,7 +15,7 @@ void BattleManager::Run() {
     std::cout << "===== Battle Start! =====\n";
     while (!IsBattleOver()) {
         std::cout << "===== Turn " << ++turnCount_ << " =====\n";
-        PrintBattleState();
+
         PlayerTurn();
         if (!IsBattleOver()) {
             EnemyTurn();
@@ -26,14 +26,11 @@ void BattleManager::Run() {
 
 void BattleManager::PlayerTurn() {
     std::cout << "===== Player's turn =====\n";
-    std::cout << "[DEBUG] Enter PlayerTurn\n";
+    bool isStun = player_->GetBuffManager().HasBuff("Stun");
     TickBuffs(*player_);
     TickCooldowns(*player_);
-    if (player_->GetBuffManager().HasBuff("Stun")) {
-        std::cout << "[DEBUG] Player is stunned, skipping turn\n";
-        return;
-    }
-    std::cout << "[DEBUG] Player not stunned, continuing\n";
+    PrintBattleState();
+    if (isStun) return;
     std::vector<Skill> skills = player_->GetSkillManager().GetSkills(); // 伪 API：列出玩家技能
     std::cout << "===== Available Skills =====\n";
     for (size_t i = 1; i < skills.size() + 1; ++i) {
@@ -62,7 +59,7 @@ void BattleManager::PlayerTurn() {
         std::cout << "Out of range\n";
     }
     std::cout << "============================\n";
-    if (skills[choice - 1].GetType() == "damage") {
+    if (skills[choice - 1].GetType() == "damage" || skills[choice - 1].GetType() == "debuff") {
         player_->CastSkill(skills[choice - 1].GetName(), *enemy_);
     } else {
         player_->CastSkill(skills[choice - 1].GetName(), *player_);
@@ -71,9 +68,10 @@ void BattleManager::PlayerTurn() {
 
 void BattleManager::EnemyTurn() {
     std::cout << "===== Enemy's turn =====\n";
+    bool isStun = enemy_->GetBuffManager().HasBuff("Stun");
     TickBuffs(*enemy_);
     TickCooldowns(*enemy_);
-    if (enemy_->GetBuffManager().HasBuff("Stun")) return;
+    if (isStun) return;
     std::vector<Skill> skills = enemy_->GetSkillManager().GetSkills();
     if (skills.empty()) return;
     if (enemy_->GetStat(StatType::HP) < 30.0f) {

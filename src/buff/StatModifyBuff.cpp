@@ -11,8 +11,12 @@ void StatModifyBuff::OnApply(Entity& target) {
         target.GetId(),
         name_,
         BuffEffectType::StatModify,
-        duration_
+        duration_,
+        policy_,
+        stacks_
     };
+    EventBus::Instance().Emit<BuffApplyEvent>(applyEvt);
+    target.ModifyStat(stat_, value_);
 }
 void StatModifyBuff::OnTick(Entity& target) {
     BuffTickEvent tickEvt{

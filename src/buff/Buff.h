@@ -6,12 +6,6 @@
 
 class Entity; // 前向声明
 
-enum class StackPolicy {
-    None,       // 不可叠加
-    Refresh,    // 刷新持续时间
-    Stack       // 叠层数（效果加强）
-};
-
 class Buff {
 public:
     Buff(const nlohmann::json& config);

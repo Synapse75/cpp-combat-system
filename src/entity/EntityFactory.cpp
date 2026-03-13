@@ -14,6 +14,9 @@ std::unique_ptr<Entity> EntityFactory::CreatePlayer(const std::string& name) {
     player->GetSkillManager().AddSkill(DataLoader::LoadSkill("Fireball"));
     player->GetSkillManager().AddSkill(DataLoader::LoadSkill("Heal"));
     player->GetSkillManager().AddSkill(DataLoader::LoadSkill("StunningStrike"));
+    player->GetSkillManager().AddSkill(DataLoader::LoadSkill("PoisonDart"));
+    player->GetSkillManager().AddSkill(DataLoader::LoadSkill("Rage"));
+
     EntityRegistry::Instance().Register(player->GetId(), name);
     return player;
 }
@@ -28,6 +31,7 @@ std::unique_ptr<Entity> EntityFactory::CreateEnemy(const std::string& name) {
     enemy->SetStat(StatType::CritRate, 0.0f);
     enemy->GetSkillManager().AddSkill(DataLoader::LoadSkill("Fireball"));
     enemy->GetSkillManager().AddSkill(DataLoader::LoadSkill("Heal"));
+    enemy->GetSkillManager().AddSkill(DataLoader::LoadSkill("StunningStrike"));
     EntityRegistry::Instance().Register(enemy->GetId(), name);
     return enemy;
 }

@@ -2,33 +2,66 @@
 #include "../event/Events.h"
 #include "../event/EventBus.h"
 #include "../entity/Entity.h"
+#include "../data/EntityRegistry.h"
 #include <iostream>
 #include <algorithm>
+
+BuffManager::BuffManager() : ownerId_(-1) {
+    removeSubscriptionId_ = EventBus::Instance().Subscribe<BuffRemoveEvent>(
+    [this](const BuffRemoveEvent& e) {
+        if (e.targetId != ownerId_) return;
+        if (inUpdate_) {
+            pendingRemovals_.push_back(e.buffName);
+        } else {
+            // safe to remove immediately
+            activeBuffs_.erase(std::remove_if(activeBuffs_.begin(), activeBuffs_.end(),
+                [&](const std::unique_ptr<Buff>& b){ return b->GetName() == e.buffName; }),
+                activeBuffs_.end());
+        }
+    }
+);
+}
+
+void BuffManager::ProcessPendingRemovals() {
+    if (pendingRemovals_.empty()) return;
+    for (const auto& name : pendingRemovals_) {
+        activeBuffs_.erase(std::remove_if(activeBuffs_.begin(), activeBuffs_.end(),
+            [&](const std::unique_ptr<Buff>& b){ return b->GetName() == name; }),
+            activeBuffs_.end());
+    }
+    pendingRemovals_.clear();
+}
+
 void BuffManager::ApplyBuff(std::unique_ptr<Buff> buff, Entity& target) {
-    // 检查是否已有同名buff
+    // 查找是否已有同名 buff
     for (const auto& b : activeBuffs_) {
         if (b->GetName() == buff->GetName()) {
             if (buff->GetStackPolicy() == StackPolicy::Stack) {
                 b->AddStack();
-                std::cout << "Stacked buff: " << b->GetName() << " now has " << b->GetStacks() << " stacks." << std::endl;
+                b->RefreshDuration();
             } else if (buff->GetStackPolicy() == StackPolicy::Refresh) {
                 b->RefreshDuration();
-                std::cout << "Refreshed buff: " << b->GetName() << " duration reset." << std::endl;
-            }
-            return; // 已处理完毕，直接返回
+            } 
+            return;
         }
     }
 
-    // 没有同名buff，直接添加
+    // 没有同名 buff：直接添加
     buff->OnApply(target);
     activeBuffs_.push_back(std::move(buff));
 }
+
 void BuffManager::UpdateAll(float deltaTime, Entity& target) {
-    for (auto& buff : activeBuffs_) {
-        buff->Update(deltaTime, target);
-    }
+    ownerId_ = target.GetId();
+    inUpdate_ = true;
+    for (auto& buff : activeBuffs_) buff->Update(deltaTime, target);
+    inUpdate_ = false;
+
+    ProcessPendingRemovals();
+    RemoveExpired();
 }
-void BuffManager::RemoveExpired(Entity& target) {
+
+void BuffManager::RemoveExpired() {
     activeBuffs_.erase(std::remove_if(activeBuffs_.begin(), activeBuffs_.end(),
         [](const std::unique_ptr<Buff>& buff) { return buff->IsExpired(); }), activeBuffs_.end());
 }

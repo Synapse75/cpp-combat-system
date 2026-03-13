@@ -1,5 +1,6 @@
 #include "Buff.h"
 #include "../entity/Entity.h"
+#include <iostream>
 
 Buff::Buff(const nlohmann::json& config)
     : name_(config.value("name", "Unknown Buff")),
@@ -29,7 +30,7 @@ const std::string& Buff::GetName() const {
     return name_;
 }
 bool Buff::IsExpired() const {
-    return remainingTime_ <= 0;
+    return int(remainingTime_) <= 0;
 }
 int Buff::GetStacks() const {
     return stacks_;
@@ -52,10 +53,10 @@ void Buff::Update(float deltaTime, Entity& target) {
 void Buff::AddStack() {
     if (policy_ == StackPolicy::Stack) {
         stacks_++;
+        std::cout << "Buff: " << name_ << " stacked! Current stacks: " << stacks_ << "\n";
     }
 }
 void Buff::RefreshDuration() {
-    if (policy_ == StackPolicy::Refresh) {
-        remainingTime_ = duration_;
-    }
+    remainingTime_ = duration_;
+    std::cout << "Buff: " << name_ << " duration refreshed!\n";
 }

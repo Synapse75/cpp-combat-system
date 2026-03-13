@@ -8,13 +8,22 @@ void StunBuff::OnApply(Entity& target) {
         target.GetId(),
         name_,
         BuffEffectType::Stun,
-        duration_
+        duration_,
+        policy_,
+        stacks_
     };
     EventBus::Instance().Emit<BuffApplyEvent>(applyEvt);
 }
 
 void StunBuff::OnTick(Entity& target) {
-    // Stun buff doesn't do anything on tick
+    BuffTickEvent tickEvt{
+        target.GetId(),
+        name_,
+        BuffEffectType::Stun,
+        0.0f, // 不造成伤害
+        remainingTime_
+    };
+    EventBus::Instance().Emit<BuffTickEvent>(tickEvt);
 }
 
 void StunBuff::OnRemove(Entity& target) {

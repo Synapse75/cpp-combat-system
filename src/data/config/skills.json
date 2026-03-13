@@ -6,7 +6,7 @@
             "multiplier": 1.0,
             "cooldown": 1.0,
             "applyBuff": "Burn",
-            "buffPossibility": 0.2
+            "buffPossibility": 0.3
         },
         {
             "name": "Heal",
@@ -20,7 +20,22 @@
             "multiplier": 1.5,
             "cooldown": 2.0,
             "applyBuff": "Stun",
-            "buffPossibility": 0.1
+            "buffPossibility": 0.2
+        },
+        {
+            "name": "PoisonDart",
+            "type": "damage",
+            "multiplier": 0.8,
+            "cooldown": 1.0,
+            "applyBuff": "Poison",
+            "buffPossibility": 0.8
+        },
+        {
+            "name": "Rage",
+            "type": "buff",
+            "cooldown": 3.0,
+            "applyBuff": "AttackBoost",
+            "buffPossibility": 1.0
         }
     ]
 }
