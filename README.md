@@ -1,15 +1,17 @@
 # cpp-combat-system
 ## 项目简介
 一个用 C++ 实现的模块化战斗系统框架（控制台演示）。目标是展示事件系统、技能、Buff 与战斗流程的设计与实现。
+
 ## 架构
-core（类型/工具）
-entity（实体/属性）
-event（EventBus）
-combat（伤害计算）
-skill（技能体系）
-buff（状态体系）
-battle（回合流程）
-data（JSON 配置）
+- core（类型/工具）
+- entity（实体/属性）
+- event（EventBus）
+- combat（伤害计算）
+- skill（技能体系）
+- buff（状态体系）
+- battle（回合流程）
+- data（JSON 配置）
+
 ## 构建方式
 **前置依赖：**
 cmake ( >= 3.15 )，
