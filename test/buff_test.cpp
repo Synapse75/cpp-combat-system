@@ -24,12 +24,13 @@ TEST(BuffManager, DotBuff_TickAndExpire) {
 
     auto buff = std::make_unique<DotBuff>(cfg);
     target.GetBuffManager().ApplyBuff(std::move(buff), target);
-
-    // OnApply should deal first tick damage
-    EXPECT_NEAR(target.GetStat(StatType::HP), 95.0f, 1e-6f);
     EXPECT_TRUE(target.GetBuffManager().HasBuff("TestDot"));
 
-    // Advance 1s -> another tick
+    // Advance 1s -> first tick (DOT doesn't deal damage on apply)
+    target.GetBuffManager().UpdateAll(1.0f, target);
+    EXPECT_NEAR(target.GetStat(StatType::HP), 95.0f, 1e-6f);
+
+    // Advance 1s -> second tick
     target.GetBuffManager().UpdateAll(1.0f, target);
     EXPECT_NEAR(target.GetStat(StatType::HP), 90.0f, 1e-6f);
 
@@ -47,7 +48,7 @@ TEST(BuffManager, StatModify_ApplyAndRemove) {
     json cfg = {
         {"name", "AtkBoost"},
         {"type", "stat_modify"},
-        {"value", 5.0f},
+        {"value", 0.5f},
         {"duration", 2.0f},
         {"tickInterval", 1.0f},
         {"stackPolicy", "refresh"}

@@ -11,4 +11,5 @@ public:
 private:
     StatType stat_;
     float value_;
+    float appliedAmount_ = 0.0f;
 };

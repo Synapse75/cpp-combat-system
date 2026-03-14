@@ -16,20 +16,37 @@ cmake ( >= 3.15 )，
 C++17 支持的编译器（MSVC / GCC / Clang）。
 
 **构建：**
-MinGW
+MinGW (single-config)
 ```
-cmake -B build -G "MinGW Makefiles"
+cmake -S . -B build -G "MinGW Makefiles"
 cmake --build build
 ```
-Visual Studio
+Visual Studio (multi-config)
 ```
 cmake -S . -B build -G "Visual Studio 17 2022"
 cmake --build build --config Release
 ```
 ## 运行方式
+Unix:
 ```
 build/combat_system
 ```
+Windows + VS:
+```
+build\Debug\combat_system.exe
+```
+或
+```
+build\Release\combat_system.exe
+```
+（取决于 --config）
+
+## 测试
+运行所有测试：
+```
+ctest --test-dir build --output-on-failure -C Debug
+```
+（或在单配置生成器中省略 -C Debug）。
 
 ## 附录
 1. 完整结构图

@@ -16,14 +16,15 @@ void StatModifyBuff::OnApply(Entity& target) {
         stacks_
     };
     EventBus::Instance().Emit<BuffApplyEvent>(applyEvt);
-    target.ModifyStat(stat_, value_);
+    appliedAmount_ = target.GetStat(stat_) * value_ * stacks_;
+    target.ModifyStat(stat_, appliedAmount_);
 }
 void StatModifyBuff::OnTick(Entity& target) {
     BuffTickEvent tickEvt{
         target.GetId(),
         name_,
         BuffEffectType::StatModify,
-        value_ * stacks_,
+        appliedAmount_,
         remainingTime_
     };
     EventBus::Instance().Emit<BuffTickEvent>(tickEvt);
@@ -35,5 +36,6 @@ void StatModifyBuff::OnRemove(Entity& target) {
         name_
     };
     EventBus::Instance().Emit<BuffRemoveEvent>(removeEvt);
-    target.ModifyStat(stat_, -value_);
+    // Revert the previously applied additive amount
+    target.ModifyStat(stat_, -appliedAmount_);
 }

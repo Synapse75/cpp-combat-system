@@ -30,7 +30,10 @@ file(GLOB_RECURSE SRC_FILES CONFIGURE_DEPENDS
 
 # Build library from sources so tests can link it (avoids duplicate compilation)
 add_library(combat_system_lib STATIC ${SRC_FILES})
-target_include_directories(combat_system_lib PUBLIC ${CMAKE_SOURCE_DIR}/src)
+target_include_directories(combat_system_lib PUBLIC
+  ${CMAKE_SOURCE_DIR}/src
+  ${CMAKE_SOURCE_DIR}/src/third_party
+)
 
 # Main executable links the library
 add_executable(combat_system main.cpp)

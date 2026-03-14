@@ -11,7 +11,6 @@ add_executable(unit_tests
 # Ensure tests can include project headers and third_party libs
 target_include_directories(unit_tests PRIVATE
   ${CMAKE_SOURCE_DIR}/src
-  ${CMAKE_SOURCE_DIR}/third_party
 )
 
 target_link_libraries(unit_tests
